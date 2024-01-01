@@ -64,9 +64,9 @@ LEFT JOIN
     rental AS r
     ON i.inventory_id = r.inventory_id
 GROUP BY 
-    category_name
+    genre_name
 ORDER BY 
-    COUNT(r.customer_id) DESC;
+    COUNT(r.rental11_id) DESC;
 
 -- Peak Rental Times
 -- Identifying the days and times when the store experiences the highest and lowest rental activity.
@@ -93,7 +93,7 @@ SELECT
 	COUNT(r.customer_id) AS total_rentals,
         SUM(
         CASE 
-            WHEN r.return_date > (r.rental_date + (f.rental_duration || ' days')::interval) THEN 1
+            WHEN r.return_date - r.rental_date > (f.rental_duration || ' days')::interval THEN 1
             ELSE 0
         END
     ) AS late_returns
@@ -136,9 +136,6 @@ JOIN
 GROUP BY
     c.customer_id, customer_name, c.create_date, c.last_update
 HAVING
-    CASE
-        WHEN c.create_date <= c.last_update THEN 'YES'
-        ELSE 'NO'
-    END = 'YES'
+    active = 1
 ORDER BY
-    total_rentals DESC;
+    create_date DESC;
